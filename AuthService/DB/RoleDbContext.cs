@@ -1,16 +1,14 @@
 ﻿using Core.Db;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Template.FrontApi.Db.Dbos;
 
-namespace Template.FrontApi.Db;
+namespace AuthService.DB;
 
-public class TemplateApiDbContext : DbContext
+public class RoleDbContext : DbContext
 {
     private readonly IDbSettings _settings;
     private readonly ILoggerFactory _loggerFactory;
 
-    public TemplateApiDbContext(
+    public RoleDbContext(
         IDbSettings settings,
         ILoggerFactory loggerFactory)
     {
@@ -18,17 +16,17 @@ public class TemplateApiDbContext : DbContext
         _loggerFactory = loggerFactory;
     }
 
-    public DbSet<TemplateDomainModelDbo> TemplateDomainModelDbos { get; set; }
+    public DbSet<RoleBlob> Roles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
-        builder.UseNpgsql(_settings.ConnectionString);
+        builder.UseNpgsql(_settings.RoleConnectionString);
         builder.UseLoggerFactory(_loggerFactory);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var templateDomainModelDbos = modelBuilder.Entity<TemplateDomainModelDbo>();
+        var templateDomainModelDbos = modelBuilder.Entity<UserDbo>();
         templateDomainModelDbos.HasKey(x => x.Id);
     }
 }

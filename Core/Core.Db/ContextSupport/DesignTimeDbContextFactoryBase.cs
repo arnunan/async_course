@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Design;
+﻿using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
@@ -9,14 +8,13 @@ public abstract class DesignTimeDbContextFactoryBase<TDbContext, TDbContextCreat
     where TDbContext : Microsoft.EntityFrameworkCore.DbContext
     where TDbContextCreator: IDbContextCreator<TDbContext>, new()
 {
-    [NotNull] private readonly IDbContextCreator<TDbContext> _dbContextCreator;
+    private readonly IDbContextCreator<TDbContext> _dbContextCreator;
 
     protected DesignTimeDbContextFactoryBase()
     {
         _dbContextCreator = new TDbContextCreator();
     }
 
-    [NotNull]
     public TDbContext CreateDbContext(string[] args)
     {
         var loggerFactory = new LoggerFactory();
@@ -39,7 +37,11 @@ public abstract class DesignTimeDbContextFactoryBase<TDbContext, TDbContextCreat
             }.ToString();
         }
 
-        [NotNull] public string ConnectionString { get; }
+        public string ConnectionString { get; }
+        
+        public string AuthConnectionString { get; }
+        
+        public string RoleConnectionString { get; }
 
         public bool DisableMigrations { get; } = false;
     }

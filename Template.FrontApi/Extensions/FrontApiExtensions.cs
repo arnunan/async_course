@@ -1,5 +1,4 @@
 ﻿using Core.Db.ContextSupport;
-using Core.WarmUp;
 using Microsoft.EntityFrameworkCore.Design;
 using Newtonsoft.Json;
 using Template.FrontApi.Configuration;
@@ -19,8 +18,7 @@ public static class FrontApiExtensions
         return services
             .AddSingleton<TemplateApiDbContext>()
             .AddSingleton(typeof(IDbContextCreator<TemplateApiDbContext>), typeof(TemplateApiDbContextCreator))
-            .AddSingleton(typeof(IDesignTimeDbContextFactory<TemplateApiDbContext>), typeof(DesignTimeDbContextFactory))
-            .AddSingleton<IWarmUp, TemplateApiDbWarmUp>();
+            .AddSingleton(typeof(IDesignTimeDbContextFactory<TemplateApiDbContext>), typeof(DesignTimeDbContextFactory));
     }
 
     private static TemplateApiApplicationSettings ReadSettingsJson()

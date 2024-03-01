@@ -1,9 +1,11 @@
 ﻿using Core.Db.Configuration;
 
-namespace Template.FrontApi.Configuration;
+namespace AuthService.Settings;
 
-public class TemplateApiApplicationSettings : IDbProperties
+public class AppSettings : IDbProperties
 {
+    public string? Secret { get; set; }
+    
     public string ConnectionString { get; set; }
     
     public string AuthConnectionString { get; set; }
@@ -11,6 +13,6 @@ public class TemplateApiApplicationSettings : IDbProperties
     public string RoleConnectionString { get; set; }
 
     public string User { get; set; }
-
+    
     public string Password { get; set; }
 }
