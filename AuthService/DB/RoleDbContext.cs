@@ -16,11 +16,11 @@ public class RoleDbContext : DbContext
         _loggerFactory = loggerFactory;
     }
 
-    public DbSet<RoleBlob> Roles { get; set; }
+    public DbSet<RoleDbo> Roles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
-        builder.UseNpgsql(_settings.RoleConnectionString);
+        builder.UseNpgsql(_settings.ConnectionString);
         builder.UseLoggerFactory(_loggerFactory);
     }
 

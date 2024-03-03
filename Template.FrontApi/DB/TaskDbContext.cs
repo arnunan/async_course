@@ -1,14 +1,14 @@
 ﻿using Core.Db;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthService.DB;
+namespace Template.FrontApi.DB;
 
-public class UserDbContext : DbContext
+public class TasksDbContext : DbContext
 {
     private readonly IDbSettings _settings;
     private readonly ILoggerFactory _loggerFactory;
 
-    public UserDbContext(
+    public TasksDbContext(
         IDbSettings settings,
         ILoggerFactory loggerFactory)
     {
@@ -16,7 +16,7 @@ public class UserDbContext : DbContext
         _loggerFactory = loggerFactory;
     }
 
-    public DbSet<UserDbo> Users { get; set; }
+    public DbSet<TaskDbo> Tasks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
@@ -24,15 +24,15 @@ public class UserDbContext : DbContext
         builder.UseLoggerFactory(_loggerFactory);
     }
 
-    public void Add(UserDbo user)
+    public void Add(TaskDbo task)
     {
-        Users.Add(user);
+        Tasks.Add(task);
         SaveChanges();
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var userDbo = modelBuilder.Entity<UserDbo>();
+        var userDbo = modelBuilder.Entity<TaskDbo>();
         userDbo.HasKey(x => x.Id);
     }
 }

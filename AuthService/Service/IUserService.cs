@@ -5,9 +5,9 @@ namespace AuthService.Service;
 
 public interface IUserService
 {
-    SignInResponseModel? SignIn(SignInRequest model);
+    User? SignIn(SignInRequest model);
 
-    SignUpResponseModel? SignUp(SignUpRequest model);
+    User SignUp(SignUpRequest model);
 
     SignInResponseModel? ForgotPassword(string username);
 

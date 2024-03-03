@@ -1,7 +1,7 @@
-﻿using AuthService.Authorization;
-using AuthService.DB;
+﻿using AuthService.DB;
 using AuthService.Entities;
 using AuthService.Models;
+using Core.KafkaClient;
 using ContextSupport = Core.Db.ContextSupport;
 
 namespace AuthService.Service;
@@ -10,19 +10,17 @@ public class UserService : IUserService
 {
     private readonly UserDbContext _userDbContext;
     private readonly RoleDbContext _roleDbContext;
+    private static MessageBus? _msgBus;
 
-    private readonly IJwtUtils _jwtUtils;
-
-    public UserService(IJwtUtils jwtUtils,
-        ContextSupport.IDbContextFactory<UserDbContext> authContextFactory,
+    public UserService(ContextSupport.IDbContextFactory<UserDbContext> authContextFactory,
         ContextSupport.IDbContextFactory<RoleDbContext> roleContextFactory)
     {
-        _jwtUtils = jwtUtils;
+        _msgBus = new MessageBus("localhost");
         _userDbContext = authContextFactory.CreateDbContext();
         _roleDbContext = roleContextFactory.CreateDbContext();
     }
 
-    public SignInResponseModel? SignIn(SignInRequest model)
+    public User? SignIn(SignInRequest model)
     {
         var userDbo =
             _userDbContext.Users.FirstOrDefault(u => u.Login == model.Username && u.Password == model.Password);
@@ -39,11 +37,10 @@ public class UserService : IUserService
             SecondName = userDbo.SecondName,
             Role = role?.RoleName
         };
-        var token = _jwtUtils.GenerateJwtToken(user);
-        return new SignInResponseModel(user, token);
+        return user;
     }
 
-    public SignUpResponseModel SignUp(SignUpRequest model)
+    public User SignUp(SignUpRequest model)
     {
         var userDbo = new UserDbo
         {
@@ -52,16 +49,15 @@ public class UserService : IUserService
             Password = model.Password,
             RoleId = 0
         };
-        _userDbContext.Users.Add(userDbo);
-
+        _userDbContext.Add(userDbo);
+        _msgBus?.SendMessage("sign-up", userDbo.Id.ToString());
         var user = new User
         {
             Id = userDbo.Id,
             Login = userDbo.Login,
             Password = userDbo.Password,
         };
-        var token = _jwtUtils.GenerateJwtToken(user);
-        return new SignUpResponseModel(user, token);
+        return user;
     }
 
     public SignInResponseModel ForgotPassword(string username)
@@ -80,8 +76,7 @@ public class UserService : IUserService
             SecondName = userDbo.SecondName,
             Role = role?.RoleName
         };
-        var token = _jwtUtils.GenerateJwtToken(user);
-        return new SignInResponseModel(user, token);
+        return new SignInResponseModel(user);
     }
 
     public IEnumerable<User> GetAll()
