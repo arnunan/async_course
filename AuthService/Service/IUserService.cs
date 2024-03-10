@@ -13,5 +13,7 @@ public interface IUserService
 
     IEnumerable<User> GetAll();
 
+    IEnumerable<User> GetAllForAssign();
+
     User? GetById(Guid userId);
 }

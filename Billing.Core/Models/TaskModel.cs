@@ -1,4 +1,4 @@
-﻿namespace Template.FrontApi.Models;
+﻿namespace Billing.Core.Models;
 
 public class TaskModel
 {
@@ -14,5 +14,5 @@ public class TaskModel
 
     public DateTime CreatedAt { get; set; }
     
-    public decimal Cost { get; set; }
+    public int Cost { get; set; }
 }

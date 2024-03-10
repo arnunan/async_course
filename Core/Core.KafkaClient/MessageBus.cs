@@ -4,41 +4,51 @@ namespace Core.KafkaClient;
 
 public sealed class MessageBus : IDisposable
 {
-    private readonly IProducer<Null, string> _producer;
-    private IConsumer<Ignore, string> _consumer;
+    private readonly IProducer<Null, MessageContract> _producer;
+    private IConsumer<Ignore, MessageContract> _consumer;
+    private int _retryCount = 5;
 
     private readonly ConsumerConfig _consumerConfig;
-
-    public MessageBus() : this("localhost")
-    {
-    }
-
-    public MessageBus(string host)
+    
+    public MessageBus()
     {
         var producerConfig = new ProducerConfig
         {
-            BootstrapServers = host,
+            BootstrapServers = "localhost",
         };
         _consumerConfig = new ConsumerConfig
         {
             GroupId = "custom-group",
-            BootstrapServers = host
+            BootstrapServers = "localhost"
         };
 
-        _producer = new ProducerBuilder<Null, string>(producerConfig).Build();
+        _producer = new ProducerBuilder<Null, MessageContract>(producerConfig).Build();
     }
 
-    public async void SendMessage(string topic, string message)
+    public async void SendMessage(string topic, MessageContract message)
     {
-        var kafkaMessage = new Message<Null, string> { Value = message };
-        await _producer.ProduceAsync(topic, kafkaMessage, new CancellationToken(false));
+        for (var i = 0; i < _retryCount; i++)
+        {
+            try
+            {
+                var kafkaMessage = new Message<Null, MessageContract> { Value = message };
+                await _producer.ProduceAsync(topic, kafkaMessage, new CancellationToken(false));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var kafkaMessage = new Message<Null, MessageContract> { Value = message };
+                if (i == _retryCount)
+                    await _producer.ProduceAsync("error-topic", kafkaMessage, new CancellationToken(false));
+            }
+        }
     }
 
     public void SubscribeOnTopic<T>(string topic, Action<T> action, CancellationToken cancellationToken)
         where T : class
     {
         var msgBus = new MessageBus();
-        using (msgBus._consumer = new ConsumerBuilder<Ignore, string>(_consumerConfig).Build())
+        using (msgBus._consumer = new ConsumerBuilder<Ignore, MessageContract>(_consumerConfig).Build())
         {
             msgBus._consumer.Assign(new List<TopicPartitionOffset> { new(topic, 0, -1) });
 

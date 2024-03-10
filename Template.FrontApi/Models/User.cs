@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace AuthService.Entities;
+﻿namespace Template.FrontApi.Models;
 
 public class User
 {
@@ -12,10 +10,5 @@ public class User
 
     public string Login { get; set; }
 
-    [JsonIgnore] public string Password { get; set; }
-
     public string Role { get; set; }
-    
-    [JsonIgnore]
-    public int RoleId { get; set; }
 }
