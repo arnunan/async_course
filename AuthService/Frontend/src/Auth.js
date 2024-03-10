@@ -9,12 +9,16 @@ async function SignIn(username, password, navigate) {
         password: password
     };
 
-    let response = await fetch('http://localhost:4000/api/auth/sign-in', {
+    let response = await fetch('http://localhost.dev.course:4000/api/auth/sign-in', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json;charset=utf-8'
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Credentials': true,
+            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, authorization',
+            'Access-Control-Allow-Origin': 'http://localhost.dev.course:3000',
         },
-        body: JSON.stringify(signInRequest)
+        body: JSON.stringify(signInRequest),
+        credentials: 'include'
     });
 
     let result = await response.json();

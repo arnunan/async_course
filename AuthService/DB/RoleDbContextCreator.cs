@@ -1,6 +1,5 @@
 ﻿using Core.Db;
 using Core.Db.ContextSupport;
-using Template.FrontApi.Db;
 
 namespace AuthService.DB;
 

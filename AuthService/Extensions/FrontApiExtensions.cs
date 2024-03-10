@@ -8,14 +8,14 @@ namespace AuthService.Extensions;
 
 public static class AuthServiceExtensions
 {
-    public static IServiceCollection AddAsyncCourseProperties(this IServiceCollection services)
+    public static void AddAsyncCourseProperties(this IServiceCollection services)
     {
-        return services.AddSingleton(ReadSettingsJson());
+        services.AddSingleton(ReadSettingsJson());
     }
 
-    public static IServiceCollection AddAsyncCourseDbContext(this IServiceCollection services)
+    public static void AddAsyncCourseDbContext(this IServiceCollection services)
     {
-        return services
+        services
             .AddSingleton<UserDbContext>()
             .AddSingleton<RoleDbContext>()
             .AddSingleton(typeof(IDbContextCreator<UserDbContext>), typeof(UserDbContextCreator))

@@ -1,0 +1,6 @@
+{
+	"ConnectionString": "Host=localhost; Port=5433; Database=postgres;",
+	"User": "postgres",
+	"Password": "123456",
+	"Secret": "c5c82b57-9d3a-4a47-b77a-1b8807c83f48"
+}

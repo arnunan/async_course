@@ -2,9 +2,27 @@ import Button from "react-bootstrap/Button";
 import {useEffect, useState} from "react";
 import {Table} from "react-bootstrap";
 
-function Account() {
-    const [username, setUsername] = useState("");
+async function GetUser(username, password, navigate) {
 
+    let response = await fetch('http://localhost.dev.course:4000/api/users/user', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Access-Control-Allow-Credentials': true,
+            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, authorization',
+            'Access-Control-Allow-Origin': 'http://localhost.dev.course:3000',
+        },
+        credentials: 'include'
+    });
+
+    let result = await response.json();
+    if (result != null)
+        navigate("/account");
+}
+
+function Account() {
+    let [username, setUsername] = useState("");
+    username = GetUser().userName;
     return (<header className="App-header">
         <Table striped bordered hover>
             <thead>
@@ -18,7 +36,7 @@ function Account() {
             </thead>
             <tbody>
             <tr>
-                <td>1</td>
+                <td>username</td>
                 <td>Mark</td>
                 <td>Otto</td>
                 <td>@mdo</td>

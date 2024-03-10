@@ -1,11 +1,9 @@
 ﻿using Core.Db.Configuration;
 
-namespace AuthService.Settings;
+namespace Billing.Core.Settings;
 
 public class AppSettings : IDbProperties
 {
-    public string? Secret { get; set; }
-    
     public string ConnectionString { get; set; }
 
     public string User { get; set; }
