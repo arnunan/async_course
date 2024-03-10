@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AuthService\AuthService.csproj" />
       <ProjectReference Include="..\Core\Core.Db.Configuration\Core.Db.Configuration.csproj" />
       <ProjectReference Include="..\Core\Core.KafkaClient\Core.KafkaClient.csproj" />
       <ProjectReference Include="..\Core\Core.Service.Domain.Startup\Core.Service.Domain.Startup.csproj" />

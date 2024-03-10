@@ -1,6 +1,6 @@
 ﻿using Core.Db.Configuration;
 
-namespace AuthService.Settings;
+namespace Billing.AccrualMoney.Consumer.Settings;
 
 public class AppSettings : IDbProperties
 {

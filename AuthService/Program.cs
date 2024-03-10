@@ -1,9 +1,12 @@
 using AuthService.Authorization;
 using AuthService.Extensions;
 using AuthService.Service;
+using AuthService.Session;
 using AuthService.Settings;
+using AuthService.Tokens;
 using Core.Service.Domain.Startup;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Caching.Distributed;
 using Template.FrontApi.Db.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,15 +16,26 @@ builder.Services.AddAsyncCourseProperties();
 builder.Services.AddAsyncCourseDbSettings<AppSettings>();
 builder.Services.AddAsyncCourseDomain();
 builder.Services.AddAsyncCourseDbContext();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options => options.LoginPath = new PathString(""));
 // add services to DI container
 {
     var services = builder.Services;
     services.AddCors();
     services.AddControllers();
+    services.AddScoped<IRoleService, RoleService>();
     services.AddScoped<ITokenHelper, TokenHelper>();
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<ISessionFactory, SessionFactory>();
+    services.AddScoped<ITokenReaderWriter, TokenReaderWriter>();
+    services.AddScoped<IDistributedCache, MemoryDistributedCache>();
+
+    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            options =>
+            {
+                options.LoginPath = new PathString("/login");
+                options.AccessDeniedPath = new PathString("/auth/denied");
+            });
 }
 
 var app = builder.Build();
@@ -30,14 +44,16 @@ var app = builder.Build();
 {
     // global cors policy
     app.UseCors(x => x
-        .AllowAnyOrigin()
+        .WithOrigins("http://localhost.dev.course:3000")
         .AllowAnyMethod()
-        .AllowAnyHeader());
-    app.UseAuthentication();
-    app.UseAuthorization();
+        .AllowAnyHeader()
+        .AllowCredentials());
     // custom jwt auth middleware
     app.UseMiddleware<JwtMiddleware>();
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.MapControllers();
 }
 
-app.Run("http://localhost:4000");
+app.Run("http://localhost.dev.course:4000");

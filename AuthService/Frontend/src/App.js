@@ -9,7 +9,7 @@ function App() {
     return (<div className="App">
         <Routes>
             <Route
-                path="/"
+                path="/login"
                 element={<Auth/>}/>
             <Route
                 path="/account"
