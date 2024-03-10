@@ -8,11 +8,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AuthService.Authorization;
 
-public class JwtUtils : IJwtUtils
+public class TokenHelper : ITokenHelper
 {
     private readonly AppSettings _appSettings;
 
-    public JwtUtils(AppSettings appSettings)
+    public TokenHelper(AppSettings appSettings)
     {
         _appSettings = appSettings;
 
@@ -27,7 +27,7 @@ public class JwtUtils : IJwtUtils
         var key = Encoding.ASCII.GetBytes(_appSettings.Secret!);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
+            Subject = new ClaimsIdentity(new[] { new Claim("userId", user.Id.ToString()) }),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

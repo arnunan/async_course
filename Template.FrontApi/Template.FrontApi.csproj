@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Core\Core.Db.Configuration\Core.Db.Configuration.csproj" />
+      <ProjectReference Include="..\Core\Core.KafkaClient\Core.KafkaClient.csproj" />
       <ProjectReference Include="..\Core\Core.Service.Domain.Startup\Core.Service.Domain.Startup.csproj" />
       <ProjectReference Include="..\Template.FrontApi.Db\Template.FrontApi.Db.csproj" />
       <ProjectReference Include="..\Template.FrontApi.Models\Template.FrontApi.Models.csproj" />
@@ -29,6 +30,16 @@
       <None Update="Settings\template_api_settings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\DomainModel\Add.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\DomainModel\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml" />
     </ItemGroup>
 
 </Project>

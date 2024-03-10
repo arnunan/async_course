@@ -8,13 +8,9 @@ public class SignUpResponseModel
 
     public string? Username { get; set; }
 
-    public string Token { get; set; }
-
-
-    public SignUpResponseModel(User user, string token)
+    public SignUpResponseModel(User user)
     {
         Id = user.Id;
         Username = user.Login;
-        Token = token;
     }
 }

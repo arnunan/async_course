@@ -14,16 +14,12 @@ public class SignInResponseModel
 
     public string Role { get; set; }
 
-    public string Token { get; set; }
-
-
-    public SignInResponseModel(User user, string token)
+    public SignInResponseModel(User user)
     {
         Id = user.Id;
         Username = user.Login;
         FirstName = user.FirstName;
         SecondName = user.SecondName;
         Role = user.Role;
-        Token = token;
     }
 }

@@ -1,4 +1,5 @@
 using Core.Service.Domain.Startup;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Template.FrontApi.Configuration;
 using Template.FrontApi.Db.Configuration;
 using Template.FrontApi.Extensions;
@@ -15,7 +16,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAsyncCourseDbSettings<TemplateApiApplicationSettings>();
 builder.Services.AddAsyncCourseDomain();
 builder.Services.AddAsyncCourseDbContext();
-
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => options.LoginPath = new PathString("login"));
 
 // app section
 var app = builder.Build();
@@ -33,6 +35,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

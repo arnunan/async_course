@@ -1,8 +1,6 @@
 {
-	"ConnectionString": "Host=localhost;Port=5433;Database=Auth;",
-	"AuthConnectionString": "Host=localhost;Port=5433;Database=Auth;",
-	"RoleConnectionString": "Host=localhost;Port=5433;Database=Role;",
+	"ConnectionString": "Host=localhost; Port=5433; Database=postgres;",
 	"User": "postgres",
 	"Password": "123456",
-	"Secret": "1"
+	"Secret": "c5c82b57-9d3a-4a47-b77a-1b8807c83f48"
 }

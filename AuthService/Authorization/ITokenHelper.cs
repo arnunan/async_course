@@ -2,7 +2,7 @@
 
 namespace AuthService.Authorization;
 
-public interface IJwtUtils
+public interface ITokenHelper
 {
     public string GenerateJwtToken(User user);
     
