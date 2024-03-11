@@ -10,5 +10,7 @@ public interface ITasksTrackerService
     
     void CreateTask(TaskModel taskModel);
     
-    void AssignTasks();
+    Task AssignTasks();
+    
+    void FinishTask(Guid taskId);
 }

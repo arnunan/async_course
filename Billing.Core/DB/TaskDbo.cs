@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Template.FrontApi.DB;
+namespace Billing.Core.DB;
 
 [Table("Task")]
 public class TaskDbo
@@ -19,6 +19,6 @@ public class TaskDbo
     [Column("status")] public TaskStatus Status { get; set; }
 
     [Column("created_at")] public DateTime CreatedAt { get; set; }
-
+    
     [Column("cost")] public int Cost { get; set; }
 }

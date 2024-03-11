@@ -9,15 +9,16 @@ namespace AuthService.Service;
 public class UserService : IUserService
 {
     private readonly UserDbContext _userDbContext;
-    private readonly RoleDbContext _roleDbContext;
+    private readonly IRoleService _roleService;
     private static MessageBus? _msgBus;
 
-    public UserService(ContextSupport.IDbContextFactory<UserDbContext> authContextFactory,
-        ContextSupport.IDbContextFactory<RoleDbContext> roleContextFactory)
+    public UserService(
+        ContextSupport.IDbContextFactory<UserDbContext> authContextFactory,
+        IRoleService roleService)
     {
-        _msgBus = new MessageBus("localhost");
+        _roleService = roleService;
+        _msgBus = new MessageBus();
         _userDbContext = authContextFactory.CreateDbContext();
-        _roleDbContext = roleContextFactory.CreateDbContext();
     }
 
     public User? SignIn(SignInRequest model)
@@ -27,7 +28,7 @@ public class UserService : IUserService
         if (userDbo == null)
             return null;
 
-        var role = _roleDbContext.Roles.FirstOrDefault(u => u.RoleId == userDbo.RoleId);
+        var role = _roleService.GetRole(userDbo.RoleId);
         var user = new User
         {
             Id = userDbo.Id,
@@ -35,7 +36,8 @@ public class UserService : IUserService
             Password = userDbo.Password,
             FirstName = userDbo.FirstName,
             SecondName = userDbo.SecondName,
-            Role = role?.RoleName
+            Role = role?.RoleName,
+            RoleId = (int)role?.RoleId
         };
         return user;
     }
@@ -50,7 +52,7 @@ public class UserService : IUserService
             RoleId = 0
         };
         _userDbContext.Add(userDbo);
-        _msgBus?.SendMessage("sign-up", userDbo.Id.ToString());
+        _msgBus?.SendMessage("sign-up", new MessageContract(userDbo.Id));
         var user = new User
         {
             Id = userDbo.Id,
@@ -66,7 +68,7 @@ public class UserService : IUserService
         if (userDbo == null)
             return null;
 
-        var role = _roleDbContext.Roles.FirstOrDefault(u => u.RoleId == userDbo.RoleId);
+        var role = _roleService.GetRole(userDbo.RoleId);
         var user = new User
         {
             Id = userDbo.Id,
@@ -74,14 +76,15 @@ public class UserService : IUserService
             Password = userDbo.Password,
             FirstName = userDbo.FirstName,
             SecondName = userDbo.SecondName,
-            Role = role?.RoleName
+            Role = role?.RoleName,
+            RoleId = (int)role?.RoleId
         };
         return new SignInResponseModel(user);
     }
 
     public IEnumerable<User> GetAll()
     {
-        var roles = _roleDbContext.Roles.ToDictionary(r => r.RoleId, r => r.RoleName);
+        var roles = _roleService.GetRoles().ToDictionary(r => r.RoleId, r => r.RoleName);
         return _userDbContext.Users.Select(u => new User
         {
             Id = u.Id,
@@ -93,9 +96,20 @@ public class UserService : IUserService
         }).ToArray();
     }
 
-    public User? GetById(int id)
+    public IEnumerable<User> GetAllForAssign()
     {
-        throw new NotImplementedException();
+        var roles = _roleService.GetRoles().ToDictionary(r => r.RoleId, r => r.RoleName);
+        return _userDbContext.Users.Select(u => new User
+            {
+                Id = u.Id,
+                Login = u.Login,
+                Password = u.Password,
+                FirstName = u.FirstName,
+                SecondName = u.SecondName,
+                Role = roles[u.RoleId]
+            })
+            .Where(u => u.RoleId != 0 || u.RoleId != 1)
+            .ToArray();
     }
 
     public User? GetById(Guid userId)
@@ -104,7 +118,7 @@ public class UserService : IUserService
         if (userDbo == null)
             return null;
 
-        var role = _roleDbContext.Roles.FirstOrDefault(u => u.RoleId == userDbo.RoleId);
+        var role = _roleService.GetRole(userDbo.RoleId);
         return new User
         {
             Id = userDbo.Id,

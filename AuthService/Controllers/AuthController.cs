@@ -30,6 +30,7 @@ public class AuthController : ControllerBase
 
         if (user == null)
             return BadRequest(new { message = "Username or password is incorrect" });
+      
         SetCookie(user);
         return Ok(new SignInResponseModel(user));
     }
@@ -58,21 +59,12 @@ public class AuthController : ControllerBase
     private void SetCookie(User user)
     {
         var token = _tokenHelper.GenerateJwtToken(user);
-        var cookieHeaders = new List<Cookie>
+        Response.Cookies.Append("authToken", token, new CookieOptions
         {
-            new("token", token, new CookieOptions
-            {
-                Expires = DateTime.UtcNow.AddDays(7),
-                HttpOnly = true
-            }),
-            new("userId", user.Id.ToString(), new CookieOptions
-            {
-                Expires = DateTime.UtcNow.AddDays(7),
-                HttpOnly = true
-            })
-        };
-
-        foreach (var cookie in cookieHeaders)
-            Response.Cookies.Append(cookie.Name, cookie.Value, cookie.Options);
+            Expires = DateTime.UtcNow.AddDays(7),
+            HttpOnly = true,
+            Domain = "localhost.dev.course",
+            Path = "/",
+        });
     }
 }

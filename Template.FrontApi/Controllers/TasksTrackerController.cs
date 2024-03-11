@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AuthService.Session;
+using Microsoft.AspNetCore.Mvc;
 using Template.FrontApi.Models;
 using Template.FrontApi.Service;
 
@@ -10,15 +11,13 @@ public class TasksTrackerController : ControllerBase
 {
     private readonly ITasksTrackerService _tasksTrackerService;
 
-    public TasksTrackerController(ITasksTrackerService tasksTrackerService)
-    {
-        this._tasksTrackerService = tasksTrackerService;
-    }
+    public TasksTrackerController(ITasksTrackerService tasksTrackerService) =>
+        _tasksTrackerService = tasksTrackerService;
 
     [HttpGet]
-    public IActionResult GetTasks(Guid userId)
+    public IActionResult GetTasks([ModelBinder] Session session)
     {
-        var taskModel = _tasksTrackerService.GetTasks(userId);
+        var taskModel = _tasksTrackerService.GetTasks(session.UserId);
         return Ok(taskModel);
     }
 
@@ -40,6 +39,13 @@ public class TasksTrackerController : ControllerBase
     public IActionResult AssignTasks()
     {
         _tasksTrackerService.AssignTasks();
+        return Ok();
+    }
+
+    [HttpPost("finish")]
+    public IActionResult FinishTask(Guid taskId)
+    {
+        _tasksTrackerService.FinishTask(taskId);
         return Ok();
     }
 }

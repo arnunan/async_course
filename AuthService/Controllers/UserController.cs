@@ -17,6 +17,13 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    [HttpGet("user")]
+    public IActionResult GetUser([ModelBinder] Session.Session session)
+    {
+        var users = _userService.GetById(session.UserId);
+        return Ok(users);
+    }
+
     [HttpGet]
     public IActionResult GetAll()
     {
